@@ -1,0 +1,38 @@
+name: Build Windows EXE with Nuitka
+
+on:
+  push:
+    tags: [ 'v*' ]  # 打 tag 如 v1.0 触发
+
+jobs:
+  build:
+    runs-on: windows-latest  # Windows 环境
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'  # 改成你的 Python 版本
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install nuitka
+        if exist requirements.txt pip install -r requirements.txt
+
+    - name: Build with Nuitka (Tkinter)
+      run: |
+        python -m nuitka ^
+          --onefile ^
+          --windows-disable-console ^
+          --enable-plugin=tk-inter ^
+          --windows-icon-from-ico=icon.ico ^  # 如果有图标
+          --output-filename=MyTkApp.exe ^
+          main.py
+
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: MyTkApp-Windows
+        path: MyTkApp.exe
