@@ -23,13 +23,7 @@ jobs:
 
     - name: Build with Nuitka (Tkinter)
       run: |
-        python -m nuitka ^
-          --onefile ^
-          --windows-disable-console ^
-          --enable-plugin=tk-inter ^
-          --windows-icon-from-ico=icon.ico ^  # 如果有图标
-          --output-filename=MyTkApp.exe ^
-          main.py
+        python -m nuitka --onefile --windows-disable-console --enable-plugin=tk-inter --output-filename=MyTkApp.exe main.py
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
