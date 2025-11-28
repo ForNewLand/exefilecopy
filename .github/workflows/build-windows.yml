@@ -2,27 +2,39 @@ name: Build Windows EXE with Nuitka
 
 on:
   push:
-    tags: [ 'v*' ]  # 打 tag 如 v1.0 触发
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest  # Windows 环境
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'  # 改成你的 Python 版本
+        python-version: '3.12'
 
-    - name: Install dependencies
-      run: pip install nuitka
+    - name: Install Nuitka + openpyxl
+      run: |
+        pip install --upgrade pip
+        pip install nuitka openpyxl==3.1.5
 
-    - name: Build with Nuitka (Tkinter)
-      run: python -m nuitka --onefile --windows-disable-console --enable-plugin=tk-inter --output-filename=MyTkApp.exe main.py
+    - name: Build with Nuitka
+      run: |
+        python -m nuitka ^
+          --onefile ^
+          --windows-disable-console ^
+          --enable-plugin=tk-inter ^
+          --assume-yes-for-downloads ^
+          --output-filename=Excel工具.exe ^
+          --windows-icon-from-ico=icon.ico ^ 
+          --include-data-files=icon.ico=icon.ico ^ 
+          main.py
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
-        name: MyTkApp-Windows
-        path: MyTkApp.exe
+        name: Excel工具-Windows
+        path: Excel工具.exe
